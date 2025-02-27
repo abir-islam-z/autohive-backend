@@ -85,6 +85,13 @@ const create = async (data: TOrder, userId: string, client_ip: string) => {
         ],
         { session },
       );
+
+      // Update order with payment reference
+      await OrderModel.findByIdAndUpdate(
+        order[0]._id,
+        { payment: paymentRecord[0]._id },
+        { session },
+      );
     }
 
     if (payment?.checkout_url) {
@@ -134,6 +141,10 @@ const findAll = async ({ user, role }: { user: string; role: string }) => {
       ? await OrderModel.find()
           .populate('user', 'name email')
           .populate('car', 'name brand model')
+          .populate(
+            'payment',
+            'transactionStatus bank_status sp_code sp_message method date_time',
+          )
       : await OrderModel.find({ user });
 
   return orders;
@@ -152,6 +163,10 @@ const findOne = async (
   const order = await OrderModel.findOne(query)
     .populate('user', 'name email')
     .populate('car', 'name brand model')
+    .populate(
+      'payment',
+      'transactionStatus bank_status sp_code sp_message method date_time',
+    )
     .select(user.role === 'admin' ? '' : '-isDeleted -updatedAt -createdAt');
 
   if (!order) {
