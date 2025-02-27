@@ -1,0 +1,22 @@
+node_modules
+dist
+
+# env
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*.local
+
+
+# vercel
+.vercel
+.vercelignore
+vercel.json
+
+
+# package manager
+package-lock.json
+yarn.lock
+.env*.local

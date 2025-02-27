@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      h1 {
+        color: #333;
+      }
+      #result {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+      }
+      button {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>API Test Page</h1>
+    <p>Click the button below to test the API endpoint:</p>
+    <button onclick="testAPI()">Test API</button>
+    <div id="result"></div>
+
+    <script>
+      async function testAPI() {
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = 'Loading...';
+
+        try {
+          const response = await fetch('/api/car');
+          const data = await response.json();
+          resultDiv.innerHTML = `<h3>API Response:</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+        } catch (error) {
+          resultDiv.innerHTML = `<h3>Error:</h3><p>${error.message}</p>`;
+        }
+      }
+    </script>
+  </body>
+</html>
