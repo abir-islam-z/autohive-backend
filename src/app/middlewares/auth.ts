@@ -11,7 +11,8 @@ import catchAsync from '../utils/catchAsync';
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(
     async (req: Request, _res: Response, next: NextFunction) => {
-      const token = req.headers.authorization?.split(' ')[1];
+      const token =
+        req.headers.authorization?.split(' ')[1] || req.cookies.token;
 
       if (!token) {
         throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
@@ -20,12 +21,12 @@ const auth = (...requiredRoles: TUserRole[]) => {
       // checking if the given token is valid
       const decoded = jwt.verify(
         token,
-        config.JWT_ACCESS_SECRET as string,
+        config.jwt.access_secret as string,
       ) as JwtPayload;
 
       const { role, userId } = decoded;
 
-      // checking if the user exist
+      // checking if the user exists
       const user = await UserModel.findById(userId);
 
       if (!user) {

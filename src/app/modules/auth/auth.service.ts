@@ -3,7 +3,7 @@ import config from '../../config';
 import AppError from '../../errors/AppError';
 import { UserModel } from '../user/user.model';
 import { TLoginUser } from './auth.interface';
-import { createToken } from './auth.utils';
+import { createToken, verifyToken } from './auth.utils';
 
 const loginUser = async (payload: TLoginUser): Promise<string> => {
   const user = await UserModel.isUserExistsByEmail(payload.email);
@@ -36,8 +36,8 @@ const loginUser = async (payload: TLoginUser): Promise<string> => {
 
   const accessToken = createToken({
     jwtPayload,
-    secret: config.JWT_ACCESS_SECRET as string,
-    expiresIn: config.JWT_ACCESS_EXPIRES_IN as string,
+    secret: config.jwt.access_secret as string,
+    expiresIn: config.jwt.access_expires_in as string,
   });
 
   return accessToken;
@@ -66,12 +66,61 @@ const changePassword = async (payload: {
   }
 
   user.password = payload.newPassword;
+  user.passwordChangedAt = new Date();
   await user.save();
 
   return;
 };
 
+const refreshToken = async (token: string) => {
+  // checking if the given token is valid
+  const decoded = verifyToken(token, config.jwt.refresh_secret as string);
+
+  const { email, iat } = decoded;
+
+  // checking if the user exists
+  const user = await UserModel.isUserExistsByEmail(email);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+  }
+  // checking if the user is already deleted
+  const isBlocked = user?.isBlocked;
+
+  if (isBlocked) {
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !');
+  }
+
+  if (
+    user.passwordChangedAt &&
+    UserModel.isJWTIssuedBeforePasswordChanged(
+      user.passwordChangedAt,
+      iat as number,
+    )
+  ) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized !');
+  }
+
+  const jwtPayload = {
+    userId: user._id as unknown as string,
+    role: user.role,
+    name: user.name,
+    email: user.email,
+  };
+
+  const accessToken = createToken({
+    jwtPayload,
+    secret: config.jwt.access_secret as string,
+    expiresIn: config.jwt.access_expires_in as string,
+  });
+
+  return {
+    accessToken,
+  };
+};
+
 export const AuthService = {
   loginUser,
   changePassword,
+  refreshToken,
 };

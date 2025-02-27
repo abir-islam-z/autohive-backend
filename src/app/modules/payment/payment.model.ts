@@ -28,12 +28,6 @@ const paymentSchema = new Schema<IPayment>(
     date_time: {
       type: String,
     },
-    order: {
-      type: Schema.Types.ObjectId,
-      ref: 'Order',
-      required: true,
-      index: true,
-    },
   },
   { timestamps: true },
 );

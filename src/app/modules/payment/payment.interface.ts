@@ -1,5 +1,3 @@
-import { Types } from 'mongoose';
-
 /* 
       id: String,
       transactionStatus: String,
@@ -18,5 +16,4 @@ export interface IPayment {
   sp_message: string;
   method: string;
   date_time: string;
-  order: Types.ObjectId;
 }

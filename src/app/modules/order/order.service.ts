@@ -47,6 +47,7 @@ const create = async (data: TOrder, userId: string, client_ip: string) => {
           totalPrice,
           orderId,
           user: userId,
+          payment: null,
         },
       ],
       { session },
@@ -75,12 +76,11 @@ const create = async (data: TOrder, userId: string, client_ip: string) => {
 
     // Record payment within transaction
     if (payment?.transactionStatus) {
-      await PaymentModel.create(
+      const paymentRecord = await PaymentModel.create(
         [
           {
             transactionStatus: payment.transactionStatus,
             id: payment.sp_order_id,
-            order: order[0]._id,
           },
         ],
         { session },

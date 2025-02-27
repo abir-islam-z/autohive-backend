@@ -9,6 +9,7 @@ export interface IOrder {
   deliveryDate: Date;
   currentStatus: string;
   user: Types.ObjectId;
+  payment: Types.ObjectId;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;

@@ -9,6 +9,7 @@ export interface TUser {
   password: string;
   role: TUserRole;
   isBlocked: boolean;
+  passwordChangedAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,4 +20,9 @@ export interface TUserModel extends Model<TUser> {
     password: string,
     encryptedPassword: string,
   ) => Promise<boolean>;
+
+  isJWTIssuedBeforePasswordChanged: (
+    passwordChangedTimestamp: Date,
+    jwtIssuedTimestamp: number,
+  ) => boolean;
 }

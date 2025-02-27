@@ -48,6 +48,10 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
       ref: 'User',
       required: true,
     },
+    payment: {
+      type: Schema.Types.ObjectId,
+      ref: 'Payment',
+    },
     isDeleted: {
       type: Boolean,
       default: false,
