@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['http://localhost:5173'], // Remove the trailing slash
+    origin: ['http://localhost:5173', 'https://autohive-backend.vercel.app'], // Remove the trailing slash
     credentials: true, // Add this to support credentials
   }),
 );

@@ -20,3 +20,5 @@ vercel.json
 package-lock.json
 yarn.lock
 .env*.local
+
+.vercel
