@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import config from '../../config';
 import catchAsync from '../../utils/catchAsync';
 import { sendResponse } from '../../utils/sendResponse';
 import { UserService } from '../user/user.service';
@@ -27,7 +28,18 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  const token = await AuthService.loginUser({ email, password });
+  const { accessToken: token, refreshToken } = await AuthService.loginUser({
+    email,
+    password,
+  });
+
+  res.cookie('refreshToken', refreshToken, {
+    secure: config.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+  });
+
   sendResponse(res, {
     success: true,
     message: 'Login successful',

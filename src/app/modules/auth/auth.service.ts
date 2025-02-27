@@ -5,7 +5,12 @@ import { UserModel } from '../user/user.model';
 import { TLoginUser } from './auth.interface';
 import { createToken, verifyToken } from './auth.utils';
 
-const loginUser = async (payload: TLoginUser): Promise<string> => {
+const loginUser = async (
+  payload: TLoginUser,
+): Promise<{
+  accessToken: string;
+  refreshToken: string;
+}> => {
   const user = await UserModel.isUserExistsByEmail(payload.email);
 
   if (!user) {
@@ -40,7 +45,16 @@ const loginUser = async (payload: TLoginUser): Promise<string> => {
     expiresIn: config.jwt.access_expires_in as string,
   });
 
-  return accessToken;
+  const refreshToken = createToken({
+    jwtPayload,
+    secret: config.jwt.refresh_secret as string,
+    expiresIn: config.jwt.refresh_expires_in as string,
+  });
+
+  return {
+    accessToken,
+    refreshToken,
+  };
 };
 
 const changePassword = async (payload: {
