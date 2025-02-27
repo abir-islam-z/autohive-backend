@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import httpStatus from 'http-status';
 import config from '../../config';
 import catchAsync from '../../utils/catchAsync';
 import { sendResponse } from '../../utils/sendResponse';
@@ -17,7 +18,7 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     message: 'User registered successfully',
-    statusCode: 201,
+    statusCode: httpStatus.CREATED,
     data: {
       _id: createdUser._id,
       name: createdUser.name,
@@ -43,7 +44,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     message: 'Login successful',
-    statusCode: 200,
+    statusCode: httpStatus.OK,
     data: {
       token,
     },
@@ -67,7 +68,7 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     message: 'Token refreshed successfully',
-    statusCode: 200,
+    statusCode: httpStatus.OK,
     data: {
       token,
     },
