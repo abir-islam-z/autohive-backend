@@ -6,6 +6,7 @@ export interface IOrder {
   car: Types.ObjectId;
   quantity: number;
   totalPrice: number;
+  shippingAddress: string;
   deliveryDate: Date;
   currentStatus: string;
   user: Types.ObjectId;
