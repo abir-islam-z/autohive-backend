@@ -37,6 +37,13 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
         description: String,
         image: String,
         currency: String,
+        color: String,
+        engine: String,
+        transmission: String,
+        fuelType: String,
+        mileage: Number,
+        horsepower: Number,
+        driveType: String,
       },
     },
     unitPrice: {
@@ -130,6 +137,13 @@ orderSchema.pre('save', async function (next) {
         description: carData.description,
         image: carData.image,
         currency: carData.currency,
+        color: carData.color,
+        engine: carData.engine,
+        transmission: carData.transmission,
+        fuelType: carData.fuelType,
+        mileage: carData.mileage,
+        horsepower: carData.horsepower,
+        driveType: carData.driveType,
       };
 
       // Ensure price consistency

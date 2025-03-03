@@ -37,6 +37,13 @@ export interface IOrder {
     description: string;
     image: string;
     currency: string;
+    color: string;
+    engine: string;
+    transmission: string;
+    fuelType: string;
+    mileage: number;
+    horsepower: number;
+    driveType: string;
   };
 }
 

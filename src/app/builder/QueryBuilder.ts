@@ -36,6 +36,16 @@ class QueryBuilder<T> {
     return this;
   }
 
+  filter() {
+    const author = this?.query?.filter;
+
+    if (author) {
+      this.modelQuery = this.modelQuery.find({ author });
+    }
+
+    return this;
+  }
+
   paginate() {
     let page = parseInt(this?.query?.page as string, 10) || 1;
 

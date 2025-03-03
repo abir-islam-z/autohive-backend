@@ -57,6 +57,40 @@ const carSchema = new Schema<ICar>(
       type: String,
       default: 'USD',
     },
+    color: {
+      type: String,
+      required: [true, 'Color is required'],
+    },
+
+    engine: {
+      type: String,
+      required: [true, 'Engine is required'],
+    },
+
+    transmission: {
+      type: String,
+      required: [true, 'Transmission is required'],
+    },
+
+    fuelType: {
+      type: String,
+      required: [true, 'Fuel Type is required'],
+    },
+
+    mileage: {
+      type: Number,
+      required: [true, 'Mileage is required'],
+    },
+
+    horsepower: {
+      type: Number,
+      required: [true, 'Horsepower is required'],
+    },
+
+    driveType: {
+      type: String,
+      required: [true, 'Drive Type is required'],
+    },
   },
   {
     timestamps: true,

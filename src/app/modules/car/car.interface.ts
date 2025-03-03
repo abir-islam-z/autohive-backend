@@ -27,5 +27,14 @@ export type ICar = {
   image: string;
   isDeleted: boolean;
   currency: string;
+  color: string;
+  engine: string;
+  transmission: string;
+  fuelType: string;
+  mileage: number;
+  horsepower: number;
+  driveType: string;
+
+  // for methods
   checkAvailability: (quantity: number) => boolean;
 };

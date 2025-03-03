@@ -20,15 +20,21 @@ const create = async (data: TCreateCar, image: string | undefined) => {
   return await CarModel.create({ ...data, image });
 };
 
-const findAll = async (query: Record<string, unknown>) => {
+const findAll = async ({ query }: { query: Record<string, unknown> }) => {
   const carsQuery = new QueryBuilder(CarModel.find(), query)
     .search(['brand', 'model', 'category'])
+    .filter()
     .sort()
     .paginate();
 
   const minPrice = parseInt(query.minPrice as string, 10);
   const maxPrice = parseInt(query.maxPrice as string, 10);
   const availability = query.availability as string;
+  const category = query.category as string;
+
+  if (category) {
+    carsQuery.modelQuery = carsQuery.modelQuery.find({ category });
+  }
 
   if (minPrice && maxPrice) {
     carsQuery.modelQuery = carsQuery.modelQuery.find({

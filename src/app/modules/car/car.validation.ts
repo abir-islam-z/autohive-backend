@@ -27,6 +27,35 @@ const createCarSchema = z.object({
       message: 'Quantity must be a non-negative integer',
     }),
   currency: z.string().default('USD'),
+  color: z.string().trim().min(1, {
+    message: 'Color is required',
+  }),
+  engine: z.string().trim().min(1, {
+    message: 'Engine is required',
+  }),
+  transmission: z.string().trim().min(1, {
+    message: 'Transmission is required',
+  }),
+  fuelType: z.string().trim().min(1, {
+    message: 'Fuel type is required',
+  }),
+  mileage: z
+    .union([z.string(), z.number()])
+    .transform(val => Number(val))
+    .refine(val => val >= 0, {
+      message: 'Mileage must be non-negative',
+    }),
+
+  horsepower: z
+    .union([z.string(), z.number()])
+    .transform(val => Number(val))
+    .refine(val => val >= 0, {
+      message: 'Horsepower must be non-negative',
+    }),
+
+  driveType: z.string().trim().min(1, {
+    message: 'Drive type is required',
+  }),
 });
 
 export type TCreateCar = z.infer<typeof createCarSchema>;
