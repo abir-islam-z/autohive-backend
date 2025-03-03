@@ -11,12 +11,10 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: () => {
-    return {
-      folder: 'CloudinaryDemo',
-      allowedFormats: ['jpeg', 'png', 'jpg'],
-    };
-  },
+  params: () => ({
+    folder: 'autohive',
+    allowed_formats: ['jpg', 'png', 'webp', 'avif', 'jpeg'],
+  }),
 });
 
 export const upload = multer({ storage });

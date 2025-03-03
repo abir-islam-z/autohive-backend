@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { CAR_CATEGORY } from './car.const';
 
-export const carValidationSchema = z.object({
+const createCarSchema = z.object({
   brand: z.string({ required_error: 'Brand is required' }),
   model: z.string({ required_error: 'Model is required' }),
   year: z
@@ -26,8 +26,14 @@ export const carValidationSchema = z.object({
     .refine(val => val >= 0 && Number.isInteger(val), {
       message: 'Quantity must be a non-negative integer',
     }),
+  currency: z.string().default('USD'),
 });
 
-export type ICar = z.infer<typeof carValidationSchema>;
+export type TCreateCar = z.infer<typeof createCarSchema>;
 
-export const carUpdateValidationSchema = carValidationSchema.partial();
+const updateCarSchema = createCarSchema.partial();
+
+export const CarValidation = {
+  createCarSchema,
+  updateCarSchema,
+};

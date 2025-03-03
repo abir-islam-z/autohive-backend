@@ -1,31 +1,44 @@
-import { TRegisterUser } from '../auth/auth.interface';
-import { TUser } from './user.interface';
+import QueryBuilder from '../../builder/QueryBuilder';
 import { UserModel } from './user.model';
+import { TUpdateUserStatus } from './user.validation';
 
-const createUser = async (data: TRegisterUser) => {
-  return await UserModel.create(data);
-};
+const getAllUsers = async ({ query }: { query: Record<string, unknown> }) => {
+  const usersQuery = new QueryBuilder(UserModel.find(), query)
+    .search(['email', 'name'])
+    .sort()
+    .paginate();
 
-const getAllUsers = async () => {
-  return await UserModel.find();
+  // filter by Role
+  if (query.role) {
+    usersQuery.modelQuery.find({ role: query.role });
+  }
+
+  // filter by isBlocked
+  if (query.isBlocked) {
+    usersQuery.modelQuery.find({
+      isBlocked: query.isBlocked.toString() === 'true',
+    });
+  }
+
+  const result = await usersQuery.modelQuery;
+  const meta = await usersQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  };
 };
 
 const getUserById = async (id: string) => {
   return await UserModel.findById(id);
 };
 
-const updateUser = async (id: string, data: TUser) => {
+const updateUser = async (id: string, data: TUpdateUserStatus) => {
   return await UserModel.findByIdAndUpdate(id, data, { new: true });
 };
 
-const deleteUser = async (id: string) => {
-  return await UserModel.findByIdAndUpdate(id, { isActive: false });
-};
-
 export const UserService = {
-  createUser,
   getAllUsers,
   getUserById,
   updateUser,
-  deleteUser,
 };

@@ -49,12 +49,17 @@ const carSchema = new Schema<ICar>(
       type: String,
       required: [true, 'Image URL is required'],
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    currency: {
+      type: String,
+      default: 'USD',
+    },
   },
   {
     timestamps: true,
-    toJSON: {
-      virtuals: true,
-    },
   },
 );
 
@@ -81,5 +86,30 @@ carSchema.pre('findOneAndUpdate', function (next) {
 carSchema.methods.checkAvailability = function (quantity: number): boolean {
   return this.quantity >= quantity;
 };
+
+carSchema.pre('find', function () {
+  // don't include deleted cars
+  this.where({ isDeleted: false });
+});
+
+carSchema.pre('findOne', function () {
+  // don't include deleted cars
+  this.where({ isDeleted: false });
+});
+
+carSchema.pre('findOneAndUpdate', function () {
+  // don't include deleted cars
+  this.where({ isDeleted: false });
+});
+
+// aggregate middleware to exclude deleted cars
+carSchema.pre('aggregate', function () {
+  this.pipeline().unshift({ $match: { isDeleted: false } });
+});
+
+carSchema.pre('countDocuments', function () {
+  // don't include deleted cars
+  this.where({ isDeleted: false });
+});
 
 export const CarModel = model<ICar>('Car', carSchema);

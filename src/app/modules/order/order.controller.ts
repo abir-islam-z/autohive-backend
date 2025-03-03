@@ -19,12 +19,12 @@ const create = catchAsync(async (req, res) => {
 
 const findAll = catchAsync(async (req, res) => {
   const result = await OrderService.findAll({
-    user: req.user.userId,
-    role: req.user.role,
+    query: req.query,
   });
 
   sendResponse(res, {
-    data: result,
+    meta: result.meta,
+    data: result.result,
     success: true,
     statusCode: httpStatus.OK,
     message: 'Orders retrieved successfully',
@@ -75,10 +75,26 @@ const verifyPayment = catchAsync(async (req, res) => {
   });
 });
 
+const findUserOrders = catchAsync(async (req, res) => {
+  const data = await OrderService.findUserOrders({
+    user: req.user.userId,
+    query: req.query,
+  });
+
+  sendResponse(res, {
+    data: data.result,
+    meta: data.meta,
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'User orders retrieved successfully',
+  });
+});
+
 export const OrderController = {
   create,
   findAll,
   findOne,
+  findUserOrders,
   update,
   remove,
   verifyPayment,

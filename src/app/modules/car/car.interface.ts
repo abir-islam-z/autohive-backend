@@ -25,6 +25,7 @@ export type ICar = {
   quantity: number;
   inStock: boolean;
   image: string;
-
+  isDeleted: boolean;
+  currency: string;
   checkAvailability: (quantity: number) => boolean;
 };

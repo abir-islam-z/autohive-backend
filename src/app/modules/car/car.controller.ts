@@ -12,12 +12,15 @@ const create = catchAsync(async (req, res) => {
   });
 });
 
-const findAll = catchAsync(async (_req, res) => {
-  const result = await CarService.findAll();
+const findAll = catchAsync(async (req, res) => {
+  const data = await CarService.findAll({
+    query: req.query,
+  });
 
   sendResponse(res, {
     success: true,
-    data: result,
+    data: data.result,
+    meta: data.meta,
     statusCode: 200,
     message: 'Cars retrieved successfully',
   });

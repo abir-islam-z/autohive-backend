@@ -1,22 +1,20 @@
 import { z } from 'zod';
+import { USER_ROLES } from './user.constant';
 
-export const userValidationSchema = z.object({
-  name: z.string().min(3),
-  email: z.string().email(),
-  password: z
-    .string()
-    .min(6)
-    .superRefine((data, ctx) => {
-      if (data?.toLocaleLowerCase().includes('password')) {
-        return ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Password must not contain the word "password" 🤬',
-        });
-      }
-    }),
-});
-
-export const userUpdateValidationSchema = z.object({
+const userUpdate = z.object({
   name: z.string().min(3).optional(),
   email: z.string().email().optional(),
 });
+
+const updateUserStatus = z.object({
+  isBlocked: z.boolean().optional(),
+  role: z.enum(USER_ROLES).optional(),
+});
+
+export type TUserUpdate = z.infer<typeof userUpdate>;
+export type TUpdateUserStatus = z.infer<typeof updateUserStatus>;
+
+export const UserValidation = {
+  userUpdate,
+  updateUserStatus,
+};

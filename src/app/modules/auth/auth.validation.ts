@@ -32,6 +32,10 @@ const refreshTokenValidationSchema = z.object({
   refreshToken: z.string().nonempty({ message: 'Refresh token is required' }),
 });
 
+export type TLogin = z.infer<typeof loginValidationSchema>;
+export type TRegister = z.infer<typeof registerValidationSchema>;
+export type TChangePassword = z.infer<typeof changePasswordValidationSchema>;
+
 export const AuthValidation = {
   loginValidationSchema,
   registerValidationSchema,

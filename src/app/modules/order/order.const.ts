@@ -5,3 +5,5 @@ export const ORDER_STATUS = [
   'shipped',
   'delivered',
 ] as const;
+
+export const OrderSearchableFields = ['orderId', 'email', 'shippingAddress'];

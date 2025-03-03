@@ -1,6 +1,20 @@
 import { z } from 'zod';
 
-export const orderValidationSchema = z.object({
+const createOrder = z.object({
+  email: z
+    .string({
+      required_error: 'Email is required',
+    })
+    .email({
+      message: 'Invalid email',
+    }),
+  phone: z
+    .string({
+      required_error: 'Phone number is required',
+    })
+    .regex(/^\+?(88)?01[0-9]\d{8}$/, {
+      message: 'Invalid phone number',
+    }),
   car: z.string({
     required_error: 'Car is required',
   }),
@@ -12,6 +26,20 @@ export const orderValidationSchema = z.object({
   }),
 });
 
-export type TOrder = z.infer<typeof orderValidationSchema>;
+export type TOrder = z.infer<typeof createOrder>;
 
-export const orderUpdateValidationSchema = orderValidationSchema.partial();
+const updateOrder = z.object({
+  currentStatus: z.enum(['pending', 'processing', 'shipped', 'delivered'], {
+    message: 'Invalid status',
+  }),
+  deliveryDate: z.string().datetime({
+    message: 'Invalid date',
+  }),
+});
+
+export type TOrderUpdate = z.infer<typeof updateOrder>;
+
+export const OrderValidation = {
+  createOrder,
+  updateOrder,
+};

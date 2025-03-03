@@ -3,29 +3,27 @@ import auth from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
 import { UserRoles } from '../user/user.constant';
 import { OrderController } from './order.controller';
-import { orderValidationSchema } from './order.validation';
+import { OrderValidation } from './order.validation';
 
 const router = Router();
 
 router.post(
   '/',
   auth(UserRoles.USER),
-  validateRequest(orderValidationSchema),
+  validateRequest(OrderValidation.createOrder),
   OrderController.create,
 );
-
-router.get('/verify', auth(UserRoles.USER), OrderController.verifyPayment);
-// my orders
-
 router.get('/', auth(UserRoles.ADMIN, UserRoles.USER), OrderController.findAll);
+router.get('/verify', auth(UserRoles.USER), OrderController.verifyPayment);
+router.get('/user', auth(UserRoles.USER), OrderController.findUserOrders);
+router.get('/:id', auth(UserRoles.ADMIN), OrderController.findOne);
 
-router.get(
+router.patch(
   '/:id',
-  auth(UserRoles.ADMIN, UserRoles.USER),
-  OrderController.findOne,
+  auth(UserRoles.ADMIN),
+  validateRequest(OrderValidation.updateOrder),
+  OrderController.update,
 );
-
-router.patch('/:id', auth(UserRoles.ADMIN), OrderController.update);
 
 router.delete('/:id', auth(UserRoles.ADMIN), OrderController.remove);
 

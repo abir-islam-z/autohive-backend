@@ -4,6 +4,11 @@ import AppError from '../../errors/AppError';
 import { UserModel } from '../user/user.model';
 import { TLoginUser } from './auth.interface';
 import { createToken, verifyToken } from './auth.utils';
+import { TRegister } from './auth.validation';
+
+const registerUser = async (payload: TRegister) => {
+  await UserModel.create(payload);
+};
 
 const loginUser = async (
   payload: TLoginUser,
@@ -20,7 +25,10 @@ const loginUser = async (
   const isBlocked = user.isBlocked;
 
   if (isBlocked) {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked !');
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'Your account has been deactivated.Please contact support !',
+    );
   }
 
   const isPasswordMatched = await UserModel.isPasswordMatched(
@@ -134,6 +142,7 @@ const refreshToken = async (token: string) => {
 };
 
 export const AuthService = {
+  registerUser,
   loginUser,
   changePassword,
   refreshToken,

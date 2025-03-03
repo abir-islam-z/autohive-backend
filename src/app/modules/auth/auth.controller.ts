@@ -3,41 +3,35 @@ import httpStatus from 'http-status';
 import config from '../../config';
 import catchAsync from '../../utils/catchAsync';
 import { sendResponse } from '../../utils/sendResponse';
-import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 
 const registerUser = catchAsync(async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
-
-  const createdUser = await UserService.createUser({
-    name,
-    email,
-    password,
-  });
+  await AuthService.registerUser(req.body);
 
   sendResponse(res, {
     success: true,
     message: 'User registered successfully',
     statusCode: httpStatus.CREATED,
-    data: {
-      _id: createdUser._id,
-      name: createdUser.name,
-      email: createdUser.email,
-    },
   });
 });
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  const { accessToken: token, refreshToken } = await AuthService.loginUser({
-    email,
-    password,
-  });
+  const { accessToken: token, refreshToken } = await AuthService.loginUser(
+    req.body,
+  );
 
-  res.cookie('refreshToken', refreshToken, {
+  /* res.cookie('refreshToken', refreshToken, {
     secure: config.NODE_ENV === 'production',
     httpOnly: true,
     sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+  }); */
+
+  res.cookie('refreshToken', refreshToken, {
+    secure:
+      config.NODE_ENV === 'production' || config.NODE_ENV === 'development', // Set secure true for both prod and dev
+    httpOnly: true,
+    sameSite: config.NODE_ENV === 'production' ? 'none' : 'lax', // Use 'lax' for development
     maxAge: 1000 * 60 * 60 * 24 * 365,
   });
 

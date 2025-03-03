@@ -3,11 +3,9 @@ import auth from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
 import { upload } from '../../utils/sendFileToCludinary';
 import { CarController } from './car.controller';
-import {
-  carUpdateValidationSchema,
-  carValidationSchema,
-} from './car.validation';
+
 import { UserRoles } from '../user/user.constant';
+import { CarValidation } from './car.validation';
 
 const router = Router();
 
@@ -15,7 +13,7 @@ router.post(
   '/',
   auth(UserRoles.ADMIN),
   upload.single('image'),
-  validateRequest(carValidationSchema),
+  validateRequest(CarValidation.createCarSchema),
   CarController.create,
 );
 
@@ -26,7 +24,7 @@ router.get('/:id', CarController.findOne);
 router.patch(
   '/:id',
   auth(UserRoles.ADMIN),
-  validateRequest(carUpdateValidationSchema),
+  validateRequest(CarValidation.updateCarSchema),
   CarController.update,
 );
 

@@ -1,11 +1,12 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import {
   BadRequestException,
   NotFoundException,
 } from '../../errors/Exceptions';
 import { CarModel } from './car.model';
-import { ICar } from './car.validation';
+import { TCreateCar } from './car.validation';
 
-const create = async (data: ICar, image: string | undefined) => {
+const create = async (data: TCreateCar, image: string | undefined) => {
   const { brand, model, year, category } = data;
 
   const existingCar = await CarModel.findOne({ brand, model, year, category });
@@ -19,8 +20,35 @@ const create = async (data: ICar, image: string | undefined) => {
   return await CarModel.create({ ...data, image });
 };
 
-const findAll = async () => {
-  return await CarModel.find();
+const findAll = async (query: Record<string, unknown>) => {
+  const carsQuery = new QueryBuilder(CarModel.find(), query)
+    .search(['brand', 'model', 'category'])
+    .sort()
+    .paginate();
+
+  const minPrice = parseInt(query.minPrice as string, 10);
+  const maxPrice = parseInt(query.maxPrice as string, 10);
+  const availability = query.availability as string;
+
+  if (minPrice && maxPrice) {
+    carsQuery.modelQuery = carsQuery.modelQuery.find({
+      price: { $gte: minPrice, $lte: maxPrice },
+    });
+  }
+
+  if (availability) {
+    carsQuery.modelQuery = carsQuery.modelQuery.find({
+      inStock: availability === 'In Stock',
+    });
+  }
+
+  const result = await carsQuery.modelQuery;
+  const meta = await carsQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  };
 };
 
 const findOne = async (id: string) => {
@@ -33,7 +61,7 @@ const findOne = async (id: string) => {
   return result;
 };
 
-const update = async (id: string, data: Partial<ICar>) => {
+const update = async (id: string, data: Partial<TCreateCar>) => {
   const result = await CarModel.findByIdAndUpdate(id, data, { new: true });
 
   if (!result) {
@@ -44,11 +72,18 @@ const update = async (id: string, data: Partial<ICar>) => {
 };
 
 const remove = async (id: string) => {
-  const result = await CarModel.findByIdAndDelete(id);
+  const findCar = await CarModel.findOne({
+    _id: id,
+    isDeleted: false,
+  });
 
-  if (!result) {
+  if (!findCar) {
     throw new NotFoundException('Car not found');
   }
+
+  findCar.isDeleted = true;
+
+  await findCar.save();
 };
 
 export const CarService = {
