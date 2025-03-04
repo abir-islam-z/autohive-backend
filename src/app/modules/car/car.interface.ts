@@ -24,7 +24,7 @@ export type ICar = {
   description: string;
   quantity: number;
   inStock: boolean;
-  image: string;
+  images: string[];
   isDeleted: boolean;
   currency: string;
   color: string;

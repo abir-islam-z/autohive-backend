@@ -60,7 +60,7 @@ const createCarSchema = z.object({
 
 export type TCreateCar = z.infer<typeof createCarSchema>;
 
-const updateCarSchema = createCarSchema.partial();
+const updateCarSchema = createCarSchema.strip().partial();
 
 export const CarValidation = {
   createCarSchema,

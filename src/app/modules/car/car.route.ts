@@ -12,14 +12,14 @@ const router = Router();
 router.post(
   '/',
   auth(UserRoles.ADMIN),
-  upload.single('image'),
+  upload.array('images'),
   validateRequest(CarValidation.createCarSchema),
   CarController.create,
 );
 
-router.get('/', CarController.findAll);
-
+router.get('/brands', CarController.getBrandsAndModels);
 router.get('/:id', CarController.findOne);
+router.get('/', CarController.findAll);
 
 router.patch(
   '/:id',

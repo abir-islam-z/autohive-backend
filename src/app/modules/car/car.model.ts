@@ -45,8 +45,8 @@ const carSchema = new Schema<ICar>(
       required: true,
       default: false,
     },
-    image: {
-      type: String,
+    images: {
+      type: [String],
       required: [true, 'Image URL is required'],
     },
     isDeleted: {

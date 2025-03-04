@@ -3,7 +3,11 @@ import { sendResponse } from '../../utils/sendResponse';
 import { CarService } from './car.service';
 
 const create = catchAsync(async (req, res) => {
-  const result = await CarService.create(req.body, req.file?.path);
+  const images =
+    req?.files && Array.isArray(req.files)
+      ? req.files.map(file => file.path)
+      : [];
+  const result = await CarService.create(req.body, images);
   sendResponse(res, {
     success: true,
     data: result,
@@ -59,10 +63,22 @@ const remove = catchAsync(async (req, res) => {
   });
 });
 
+const getBrandsAndModels = catchAsync(async (_req, res) => {
+  const data = await CarService.getBrandsAndModels();
+
+  sendResponse(res, {
+    success: true,
+    data,
+    statusCode: 200,
+    message: 'Brands retrieved successfully',
+  });
+});
+
 export const CarController = {
   create,
   findAll,
   findOne,
   update,
   remove,
+  getBrandsAndModels,
 };
