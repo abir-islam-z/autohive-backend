@@ -10,15 +10,9 @@ dist
 .env.*.local
 
 
-# vercel
-.vercel
-.vercelignore
-vercel.json
 
 
 # package manager
 package-lock.json
 yarn.lock
 .env*.local
-
-.vercel
