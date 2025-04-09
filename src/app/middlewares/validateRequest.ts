@@ -2,15 +2,15 @@ import { NextFunction, Request, Response } from 'express';
 import { AnyZodObject } from 'zod';
 import catchAsync from '../utils/catchAsync';
 
-type Placeholder = 'body' | 'query' | 'cookies' | 'params' | 'file';
+type ValidatePart = 'body' | 'query' | 'cookies' | 'params';
 
 const validateRequest = (
   schema: AnyZodObject,
-  placeholder: Placeholder[] = ['body'],
+  validatePart: ValidatePart[] = ['body'],
 ) => {
   return catchAsync(
     async (req: Request, _res: Response, next: NextFunction) => {
-      for (const key of placeholder) {
+      for (const key of validatePart) {
         if (!req[key]) {
           continue;
         }

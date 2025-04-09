@@ -24,6 +24,7 @@ router.get('/', CarController.findAll);
 router.patch(
   '/:id',
   auth(UserRoles.ADMIN),
+  upload.array('images'),
   validateRequest(CarValidation.updateCarSchema),
   CarController.update,
 );

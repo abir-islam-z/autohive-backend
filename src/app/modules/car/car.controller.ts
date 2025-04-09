@@ -42,7 +42,14 @@ const findOne = catchAsync(async (req, res) => {
 });
 
 const update = catchAsync(async (req, res) => {
-  const result = await CarService.update(req.params.id, req.body);
+  const images =
+    req?.files && Array.isArray(req.files)
+      ? req.files.map(file => file.path)
+      : [];
+
+  const data = { ...req.body, images };
+
+  const result = await CarService.update(req.params.id, data);
 
   sendResponse(res, {
     success: true,
